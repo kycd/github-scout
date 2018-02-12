@@ -1,0 +1,5 @@
+# this config timezone is GMT+0
+# m h md m wd cmd
+
+# run scout every Tuesday 10:00.
+0 2 * * 2 /usr/local/bin/php /github-scout/src/main.php >>/var/log/cron.log 2>&1
