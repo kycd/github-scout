@@ -1,0 +1,17 @@
+{
+    "channel": {
+        "hook": "slack_incoming_webhook_url",
+        "guards": [
+            "@username"
+        ]
+    },
+    "targets": [
+        {
+            "owner": "KKBOX",
+            "repos": [
+                "OpenAPI-JavaScript",
+                "OpenAPI-Python"
+            ]
+        }
+    ]
+}
