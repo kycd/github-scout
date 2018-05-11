@@ -39,16 +39,44 @@ class Scout
 
     protected function createReport($arr)
     {
-        $max_repo_length = 0;
+        $len = [
+            'name' => 4,
+            'watch' => 5,
+            'star' => 4,
+            'fork' => 4,
+        ];
         foreach ($arr as $repo_data) {
-            if ($max_repo_length < strlen($repo_data['name'])) {
-                $max_repo_length = strlen($repo_data['name']);
+            if ($len['name'] < strlen($repo_data['name'])) {
+                $len['name'] = strlen($repo_data['name']);
+            }
+            $keys = ['watch', 'star', 'fork'];
+            foreach ($keys as $key) {
+                $column_len = strlen(sprintf("%d", $repo_data[$key]));
+                $len[$key] = max($len[$key], $column_len);
             }
         }
-        $border_format = sprintf("+%%%ds+%%%ds+%%%ds+%%%ds+\n", $max_repo_length + 2, 7, 6, 6);
-        $field_format = sprintf("| %%-%ds | %%%ds | %%%ds | %%%ds |\n", $max_repo_length, 5, 4, 4);
+        $border_format = sprintf(
+            "+%%%ds+%%%ds+%%%ds+%%%ds+\n",
+            $len['name'] + 2,
+            $len['watch'] + 2,
+            $len['star'] + 2,
+            $len['fork'] + 2
+        );
+        $field_format = sprintf(
+            "| %%-%ds | %%%ds | %%%ds | %%%ds |\n",
+            $len['name'],
+            $len['watch'],
+            $len['star'],
+            $len['fork']
+        );
         
-        $border = sprintf($border_format, str_repeat("-", $max_repo_length + 2), str_repeat("-", 7), str_repeat("-", 6), str_repeat("-", 6));
+        $border = sprintf(
+            $border_format,
+            str_repeat("-", $len['name'] + 2),
+            str_repeat("-", $len['watch'] + 2),
+            str_repeat("-", $len['star'] + 2),
+            str_repeat("-", $len['fork'] + 2)
+        );
 
         $table = "";
 
