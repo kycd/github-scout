@@ -6,21 +6,55 @@ class Staff
     {
     }
 
-    public function createReport($data)
+    public function record($data, $save_path)
     {
+        $dir_path = dirname($save_path);
+        if (!file_exists($dir_path)) {
+            mkdir($dir_path);
+        }
+
+        $fp = fopen($save_path, 'w');
+        fwrite($fp, json_encode($data));
+    }
+
+    public function createReport($data, $record_path = '')
+    {
+        if (file_exists($record_path)) {
+            $fp = fopen($record_path, 'r');
+            $contents = fread($fp, filesize($record_path));
+            $base_data = json_decode($contents);
+        }
         $len = [
             'name' => 4,
             'watch' => 5,
             'star' => 4,
             'fork' => 4,
         ];
-        foreach ($data as $repo_data) {
+        foreach ($data as $repo_name => $repo_data) {
             if ($len['name'] < strlen($repo_data['name'])) {
                 $len['name'] = strlen($repo_data['name']);
             }
             $keys = ['watch', 'star', 'fork'];
             foreach ($keys as $key) {
-                $column_len = strlen(sprintf("%d", $repo_data[$key]));
+                $column_val = $repo_data[$key];
+                $column_str = sprintf("%d", $column_val);
+                $column_len = strlen($column_str);
+                $data[$repo_name][$key . '_str'] = $column_str;
+
+                if (isset($base_data->$repo_name)) {
+                    $base_column_val = $base_data->$repo_name->$key;
+
+                    if ($base_column_val > $column_val) {
+                        $column_str = sprintf("%d%d", $base_column_val, $column_val - $base_column_val);
+                        $column_len = strlen($column_str);
+                $data[$repo_name][$key . '_str'] = $column_str;
+                    } else if ($base_column_val < $column_val) {
+                        $column_str = sprintf("%d+%d", $base_column_val, $column_val - $base_column_val);
+                        $column_len = strlen($column_str);
+                $data[$repo_name][$key . '_str'] = $column_str;
+                    }
+                }
+
                 $len[$key] = max($len[$key], $column_len);
             }
         }
@@ -55,7 +89,7 @@ class Staff
         $table .= $border;
 
         foreach ($data as $repo_data) {
-            $table .= sprintf($field_format, $repo_data['name'], $repo_data['watch'], $repo_data['star'], $repo_data['fork']);
+            $table .= sprintf($field_format, $repo_data['name'], $repo_data['watch_str'], $repo_data['star_str'], $repo_data['fork_str']);
         }
 
         $table .= $border;

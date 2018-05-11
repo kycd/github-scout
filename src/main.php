@@ -9,8 +9,10 @@ $config = json_decode($config_str);
 $scout = new Scout($config->targets);
 $result = $scout->explore();
 
+$record_path = __DIR__ . '/../tmp/data.json';
 $staff = new Staff();
-$message = $staff->createReport($result);
+$message = $staff->createReport($result, $record_path);
+$staff->record($result, $record_path);
 
 if (!in_array('--no-output', $argv)) {
     $messenger = new Messenger($config->channels);
