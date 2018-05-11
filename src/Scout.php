@@ -3,9 +3,14 @@
 class Scout
 {
     protected $targets;
+    private $token = null;
+
     public function __construct($config)
     {
-        $this->targets = $config;
+        $this->targets = $config['targets'];
+        if (isset($config['token'])) {
+            $this->token = $config['token'];
+        }
     }
 
     public function explore()
@@ -18,6 +23,10 @@ class Scout
                 CURLOPT_RETURNTRANSFER => true,
             ]
         );
+        if ($this->token != null) {
+            $headers[] = 'Authorization: token ' . $this->token;
+            curl_setopt($curl_client, CURLOPT_HTTPHEADER, $headers);
+        }
         $arr = [];
         foreach ($this->targets as $target) {
             foreach ($target->repos as $repo) {

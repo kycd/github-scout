@@ -6,7 +6,10 @@ require __DIR__ . '/Staff.php';
 $config_str = file_get_contents(__DIR__ . '/../config/config.json');
 $config = json_decode($config_str);
 
-$scout = new Scout($config->targets);
+$scout = new Scout([
+    'targets' => $config->targets,
+    'token' => $config->token
+]);
 $result = $scout->explore();
 
 $record_path = __DIR__ . '/../tmp/data.json';
