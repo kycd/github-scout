@@ -15,5 +15,6 @@
                 "OpenAPI-Python"
             ]
         }
-    ]
+    ],
+    "token": "your-personal-token"
 }
