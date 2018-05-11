@@ -17,7 +17,15 @@ $staff = new Staff();
 $message = $staff->createReport($result, $record_path);
 $staff->record($result, $record_path);
 
-if (!in_array('--no-output', $argv)) {
+/*
+ * output mode:
+ * (no flag)(default): output to slack channel
+ * --output-screen: output to std.
+ * --output-none: no output.
+ * */
+if (in_array('--output-screen', $argv)) {
+    echo $message . "\n";
+} else if (!in_array('--output-none', $argv)) {
     $messenger = new Messenger($config->channels);
     $messenger->sendMessage($message);
 }
