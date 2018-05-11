@@ -8,6 +8,8 @@ $config = json_decode($config_str);
 $scout = new Scout($config->targets);
 $result = $scout->explore();
 
-$messenger = new Messenger($config->channels);
-$messenger->sendMessage($result);
+if (!in_array('--no-output', $argv)) {
+    $messenger = new Messenger($config->channels);
+    $messenger->sendMessage($result);
+}
 
